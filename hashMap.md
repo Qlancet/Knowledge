@@ -58,10 +58,10 @@
 >   final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 >                      boolean evict) {
 >           Node<K,V>[] tab; Node<K,V> p; int n, i;
->           //没有初始化,懒加载,第一次put数据的时候才会resize
+>           //没有初始化,懒加载,第一次put数据的时候才会resize,避免创建后不放数据,占据空间
 >           if ((tab = table) == null || (n = tab.length) == 0)
 >               n = (tab = resize()).length;
->           //下角标index寻址: hash&(table.lenght()-1),如果寻址刚好是null,将当前k,v封装成			// node装进去  
+>           //下角标index寻址: hash&(table.lenght()-1),如果寻址刚好是null,将当前k,v封装成			// 				 node装进去, =null表示没有数据,刚好存进去  
 >           if ((p = tab[i = (n - 1) & hash]) == null)
 >               tab[i] = newNode(hash, key, value, null);
 >           else {
