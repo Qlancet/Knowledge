@@ -46,61 +46,66 @@
 
 ![1615465983219](assets/1615465983219.png)
 
-> - [ ] ```java
->     /**
->     	*
->     	* tab表示当前hashmap的table
->       * p表示table的元素
->       * n表示散列表的长度
->       * i表示路由寻址结果
->     	*
->      /*
->   final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
->                      boolean evict) {
->           Node<K,V>[] tab; Node<K,V> p; int n, i;
->           //没有初始化,懒加载,第一次put数据的时候才会resize,避免创建后不放数据,占据空间
->           if ((tab = table) == null || (n = tab.length) == 0)
->               n = (tab = resize()).length;
->           //下角标index寻址: hash&(table.lenght()-1),如果寻址刚好是null,将当前k,v封装成			// 				 node装进去, =null表示没有数据,刚好存进去  
->           if ((p = tab[i = (n - 1) & hash]) == null)
->               tab[i] = newNode(hash, key, value, null);
->           else {
->           	//e:node元素
->           	//K:临时key
->               Node<K,V> e; K k;
->               if (p.hash == hash &&
->                   ((k = p.key) == key || (key != null && key.equals(k))))
->                   e = p;
->               else if (p instanceof TreeNode)
->                   e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
->               else {
->                   for (int binCount = 0; ; ++binCount) {
->                       if ((e = p.next) == null) {
->                           p.next = newNode(hash, key, value, null);
->                           if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
->                               treeifyBin(tab, hash);
->                           break;
->                       }
->                       if (e.hash == hash &&
->                           ((k = e.key) == key || (key != null && key.equals(k))))
->                           break;
->                       p = e;
->                   }
->               }
->               if (e != null) { // existing mapping for key
->                   V oldValue = e.value;
->                   if (!onlyIfAbsent || oldValue == null)
->                       e.value = value;
->                   afterNodeAccess(e);
->                   return oldValue;
->               }
->           }
->           ++modCount;
->           if (++size > threshold)
->               resize();
->           afterNodeInsertion(evict);
->           return null;
->       }
->   ```
+```java
+  /**
+  	*
+  	* tab表示当前hashmap的table
+    * p表示table的元素
+    * n表示散列表的长度
+    * i表示路由寻址结果
+  	*
+   /*
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                   boolean evict) {
+        Node<K,V>[] tab; Node<K,V> p; int n, i;
+        //没有初始化,懒加载,第一次put数据的时候才会resize,避免创建后不放数据,占据空间
+        if ((tab = table) == null || (n = tab.length) == 0)
+            n = (tab = resize()).length;
+        //下角标index寻址: hash&(table.lenght()-1),如果寻址刚好是null,将当前k,v封装成					//node装进去, =null表示没有数据,刚好存进去  
+        if ((p = tab[i = (n - 1) & hash]) == null)
+            tab[i] = newNode(hash, key, value, null);
+        else {
+        	//e:不为null的话,找到了一个与当前kv相同的key的元素
+            //K:表示临时key
+            Node<K,V> e; K k;
+            // p.hash==hash表示与当前插入元素的key完全相同,后续需要进行替换操作
+            if (p.hash == hash &&
+                ((k = p.key) == key || (key != null && key.equals(k))))
+                e = p;
+            else if (p instanceof TreeNode)
+                e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+            else {
+            	//链表:链表的头元素和我们要插入的key不一致
+                for (int binCount = 0; ; ++binCount) {
+                	//条件成立的话: 说明迭代到最后一个元素,也没找到一个与我们要插入的key一致的node
+                	//,说明我们需要加入到当前链表的末尾
+                    if ((e = p.next) == null) {
+                        p.next = newNode(hash, key, value, null);
+                      //条件成立的话,说明链表的长度达到标准了,需要进行树化处理
+                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                            treeifyBin(tab, hash);
+                        break;
+                    }
+                    if (e.hash == hash &&
+                        ((k = e.key) == key || (key != null && key.equals(k))))
+                        break;
+                    p = e;
+                }
+            }
+            if (e != null) { // existing mapping for key
+                V oldValue = e.value;
+                if (!onlyIfAbsent || oldValue == null)
+                    e.value = value;
+                afterNodeAccess(e);
+                return oldValue;
+            }
+        }
+        ++modCount;
+        if (++size > threshold)
+            resize();
+        afterNodeInsertion(evict);
+        return null;
+    }
+```
 
 第三条
