@@ -116,4 +116,109 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 
 
-123
+### resize
+
+```java
+
+final Node<K,V>[] resize() {
+    	//oldTab:用于扩容前的hash表
+        Node<K,V>[] oldTab = table;
+    	//oldCap:扩容前table数组的长度
+        int oldCap = (oldTab == null) ? 0 : oldTab.length;
+    	//oldThr:扩容之前的扩容阈值,触发本次扩容的阈值
+        int oldThr = threshold;
+   		 //newCap:扩容之后的数组大小
+    	//newThr:  扩容之后,下次再触发扩容的条件
+        int newCap, newThr = 0;
+    	//条件成立: hashmap中的数列表已经初始化了,是一次正常的扩容
+        if (oldCap > 0) {
+            //数组已经达到最大阈值,以后无法再扩容
+            if (oldCap >= MAXIMUM_CAPACITY) {
+                threshold = Integer.MAX_VALUE;
+                return oldTab;
+            }
+            //oldcap左移1位,并赋值给newcap,newcap小于最大阈值,同时oldcap大于16
+            //这种情况下,则下次扩容的阈值翻倍
+            else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
+                     oldCap >= DEFAULT_INITIAL_CAPACITY)
+                newThr = oldThr << 1; // double threshold
+        }
+    	//oldcap==0,说明散列表没有初始化,
+        else if (oldThr > 0) // initial capacity was placed in threshold
+            newCap = oldThr;
+    	//oldThr=0,oldCap=0
+        else {               // zero initial threshold signifies using defaults
+            newCap = DEFAULT_INITIAL_CAPACITY;
+            newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+        }
+    	//newThr=0
+        if (newThr == 0) {
+            float ft = (float)newCap * loadFactor;
+            newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
+                      (int)ft : Integer.MAX_VALUE);
+        }
+        threshold = newThr;
+    	
+   		//创建一个新的更长更大的数组
+        @SuppressWarnings({"rawtypes","unchecked"})
+            Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+        table = newTab;
+    	//说明hash本次扩容之前,table不是null
+        if (oldTab != null) {
+            for (int j = 0; j < oldCap; ++j) {
+                //e:当前node节点
+                Node<K,V> e;
+                //说明当前桶位有数据,但是具体是链表还是红黑树不确定
+                if ((e = oldTab[j]) != null) {
+                    //方便jvm GC时候回收内存
+                    oldTab[j] = null;
+                    //当前桶位只有一个元素,从未发生过碰撞,直接计算出在新数组中的位置,然后扔进去就可以
+                    if (e.next == null)
+                        newTab[e.hash & (newCap - 1)] = e;
+                    //当前节点已经树化,
+                    else if (e instanceof TreeNode)
+                        ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+                    //
+                    else { // preserve order
+                        //低位链表:存放扩容之后数组的下标位置,与当前数组下标位置是一致的
+                        Node<K,V> loHead = null, loTail = null;
+                        //高位列表,存放扩容之后数组的下标位置,与当前数组下标位置+扩容之前数组的长度
+                        Node<K,V> hiHead = null, hiTail = null;
+                        Node<K,V> next;
+                        do {
+                            next = e.next;
+                            //hash--->1 11111
+                            //hash--->0 11111
+                            // oldcap: 10000
+                            //结果出来: 首位要么是0 要么是1, 也就是低位继续15, 高位到31
+                            if ((e.hash & oldCap) == 0) {
+                                if (loTail == null)
+                                    loHead = e;
+                                else
+                                    loTail.next = e;
+                                loTail = e;
+                            }
+                            else {
+                                if (hiTail == null)
+                                    hiHead = e;
+                                else
+                                    hiTail.next = e;
+                                hiTail = e;
+                            }
+                        } while ((e = next) != null);
+                        if (loTail != null) {
+                            loTail.next = null;
+                            newTab[j] = loHead;
+                        }
+                        if (hiTail != null) {
+                            hiTail.next = null;
+                            newTab[j + oldCap] = hiHead;
+                        }
+                    }
+                }
+            }
+        }
+        return newTab;
+    }
+```
+
