@@ -8,9 +8,7 @@
 
 ​					链表:可以动态扩容,不需要重新创建
 
-![1615384308128](C:\Users\zwq\AppData\Roaming\Typora\typora-user-images\1615384308128.png)
-
-
+![1615465879578](assets/1615465879578.png)
 
 #### hash:
 
@@ -26,11 +24,7 @@
 
 ​		hash算法冲突效率要小
 
-![1615385140729](C:\Users\zwq\AppData\Roaming\Typora\typora-user-images\1615385140729.png)
-
-​			
-
-### 名词解释
+### ![1615465900292](assets/1615465900292.png)名词解释
 
 ​			hashmap的底层数据结构名为table的数组，是一个Node数组
 
@@ -50,7 +44,7 @@
 
 ​				作用是:让key的高16位也参与运算,让hash值散布更加均匀
 
-​			![1615387381776](C:\Users\zwq\AppData\Roaming\Typora\typora-user-images\1615387381776.png)
+![1615465983219](assets/1615465983219.png)
 
 > - [ ] ```java
 >     /**
@@ -71,6 +65,8 @@
 >           if ((p = tab[i = (n - 1) & hash]) == null)
 >               tab[i] = newNode(hash, key, value, null);
 >           else {
+>           	//e:node元素
+>           	//K:临时key
 >               Node<K,V> e; K k;
 >               if (p.hash == hash &&
 >                   ((k = p.key) == key || (key != null && key.equals(k))))
@@ -106,4 +102,3 @@
 >           return null;
 >       }
 >   ```
-
