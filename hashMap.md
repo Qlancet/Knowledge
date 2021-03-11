@@ -86,12 +86,14 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                             treeifyBin(tab, hash);
                         break;
                     }
+                    //条件成立的话:说明找到了相同key的node元素,需要进行替换操作
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
                     p = e;
                 }
             }
+            //成立说明:找到一个与插入元素key完全一致的数据,需要进行替换
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 if (!onlyIfAbsent || oldValue == null)
@@ -100,7 +102,9 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                 return oldValue;
             }
         }
+        //modeCount:表示散列表结构被修改的次数,替换元素的value不算(+-操作)
         ++modCount;
+     	//插入新元素,size自增,如果自增后的size大于阈值,触发扩容
         if (++size > threshold)
             resize();
         afterNodeInsertion(evict);
@@ -108,4 +112,3 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
     }
 ```
 
-第三条
