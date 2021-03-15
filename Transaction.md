@@ -12,3 +12,6 @@
 
 **PlatformTransactionManager：**一个高层次的接口，包含3个方法。`commit`、`rollback`和getTramsaction	         
 
+https://www.jianshu.com/p/8ff9201ed7d6
+
+https://cloud.tencent.com/developer/article/1498792
