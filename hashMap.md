@@ -223,3 +223,59 @@ final Node<K,V>[] resize() {
     }
 ```
 
+
+
+# 红黑树
+
+### 		二叉搜索树
+
+​					每个结点的键都大于其左子树中的任意结点的键而小于右子树的任意结点的键
+
+​					左右子树叶分别是二叉排序树
+
+​					如果我们将一颗二叉查找树的所有键**投影**到一条直线上，保证一个结点的左子树中的键出现在它的右					边，右子树中的键出现在它的右边，那么我们一定可以得到一条有序的键列。
+
+​					![1615817999434](hashMap.assets/1615817999434.png)
+
+​				
+
+```java
+public class BinarySearchTest {
+    public static void main(String[] args) {
+        int[] arr = new int[]{1, 2, 4, 5, 6, 7, 8, 8, 8, 12, 1};
+        System.out.println(BinarySearchTest(arr, 12));
+    }
+    public static int BinarySearchTest(int[] arr, int data) {
+        int low = 0;
+        int heig = arr.length - 1;
+        while (low <= heig) {
+            int mid = low + (heig - low) / 2;
+            if (arr[mid] < data) {
+                low = mid + 1;
+            } else if (arr[mid] == data) {
+                return mid;
+            } else {
+                heig = mid - 1;
+            }
+        }
+        return -1;
+    }
+}
+```
+
+### 平衡二叉树
+
+​			左右子树的高度差至多等于1
+
+### 红黑树
+
+​			每个节点要么黑色,要么红色
+
+​			根节点是黑色
+
+​			每个叶子结点(NIL)黑色
+
+​			每个红色节点的两个子节点是黑色的,不能有2个红色节点相连接
+
+​			任意一个节点到叶子节点的路径都包含数量相同的黑节点,俗称 "黑高"
+
