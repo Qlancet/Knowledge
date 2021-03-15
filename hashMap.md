@@ -206,6 +206,7 @@ final Node<K,V>[] resize() {
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
+                        //
                         if (loTail != null) {
                             loTail.next = null;
                             newTab[j] = loHead;
