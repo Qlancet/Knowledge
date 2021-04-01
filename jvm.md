@@ -256,4 +256,109 @@ https://juejin.cn/post/6844904125696573448
 
 ### 垃圾回收器
 
-​			
+#### 			工作模式
+
+![1616397064001](jvm.assets/1616397064001.png)
+
+#### GC的性能指标
+
+​			吞吐量：运行用户代码的时间占总运行时间的比例（总运行时间：程序的运行时间十内存回收的时间）
+
+​			暂停时间：执行垃圾收集时，程序的工作线程被暂停的时间
+
+## Serial回收器
+
+![1616425754927](jvm.assets/1616425754927.png)
+
+## ParNew回收器
+
+![1616426410278](jvm.assets/1616426410278.png)
+
+## Parallel回收器:吞吐量优先
+
+![1616593622639](jvm.assets/1616593622639.png)
+
+## CMS回收器
+
+![1616594633350](jvm.assets/1616594633350.png)
+
+## GC选择
+
+如果你想要最小化地使用内存和并行开销，请选Serial GC；
+如果你想要最大化应用程序的吞吐量，请选Parallel GC；
+如果你想要最小化GC的中断或停顿时间，请选CMS GC。
+
+## G1
+
+![1616851354548](jvm.assets/1616851354548.png)
+
+## 垃圾回收器总结
+
+![1616852012110](jvm.assets/1616852012110.png)
+
+
+
+![1616852103123](jvm.assets/1616852103123.png)
+
+## GC日志
+
+​				https://juejin.cn/post/6844904200678146061#heading-40
+
+​				一XX： +PrintGCDetails 输出GC的详细日志
+
+​				一Xloggc：. . /logs/gc. log日志文件的输出路径
+
+
+
+### spring.factories如何加载?
+
+​	参考:https://zhuanlan.zhihu.com/p/163715640![1616855719536](jvm.assets/1616855719536.png)
+
+### @Import注解
+
+参考: https://blog.csdn.net/mlplds/article/details/102826671
+
+![1616939197935](jvm.assets/1616939197935.png)
+
+![1616985960371](jvm.assets/1616985960371.png)
+
+![1616997313198](jvm.assets/1616997313198.png)
+
+![1617027542018](jvm.assets/1617027542018.png)
+
+AOP源码
+
+参考: https://blog.csdn.net/java_yes/article/details/98209495
+
+参考: https://cloud.tencent.com/developer/article/1661912
+
+![1617027731001](jvm.assets/1617027731001.png)
+
+
+
+### Feign源码
+
+https://tech.souyunku.com/?p=37451
+
+https://tech.souyunku.com/?cat=62
+
+
+
+### Redis集群创建
+
+​		注意事项:
+
+​					参考这个: https://blog.csdn.net/qq_42815754/article/details/82912130
+
+​					注意修改:  client.rb 里面的host地址(find / -name client.rb )
+
+​					注意修改: 每个redis的 redis.conf里面的
+
+​								端口, cluster-enable yes, protect-mod:yes 和bind的ip(和client.tb里面的ip相同)
+
+​					启动命令:
+
+​									./redis-trib.rb create --replicas 1 172.16.99.231:6380  172.16.99.231:6381  172.16.99.231:6382  172.16.99.231:6383  172.16.99.231:6384  172.16.99.231:6385
+
+​						
+
