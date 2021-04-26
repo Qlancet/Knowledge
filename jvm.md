@@ -94,6 +94,8 @@ public class RuntimeConstantPoolOOM {
 
 ### Heap
 
+​			参考: https://www.zhihu.com/question/64436849
+
 ​			设置大小: -Xms10m -Xmx10m(一旦堆区中的内存大小超过“-Xmx”所指定的最大内存时，将会抛出OutofMemoryError)
 
 ​			通常会将-Xms和-Xmx两个参数**配置相同的值**，其目的是为了能够在Java垃圾回收机制清理完堆区后不需要重新分隔计算堆区的大小，从而提高性能。
@@ -254,6 +256,26 @@ public class RuntimeConstantPoolOOM {
 
 https://juejin.cn/post/6844904125696573448
 
+
+
+## 动态年龄
+
+
+默认规则：
+
+-**XX:MaxTenuringThreshold**=X X默认是15，15的含义是从eden-->survivor 对象年龄+1，survivor-->eden 对象年龄+1，直到年龄达到15后开始进入old Generation。
+动态规则：
+
+Hotspot遍历所有对象时，按照年龄从小到大对其所占用的大小进行累积，**当累积的某个年龄大小超过了survivor区的一半时，取这个年龄和MaxTenuringThreshold中更小的一个值**，作为新的晋升年龄阈值。
+eg:
+eg：Survivor区 = 64M，desired survivor = 32M，此时Survivor区中age<=2的对象累计大小为41M，41M大于32M，所以晋升年龄阈值被设置为2，下次Minor GC时将年龄超过2的对象被晋升到老年代。就会导致old generation 快速填满，触发old gc（old gc 有三处STW），所以这是建议调整**-XX:SurvivorRatio**参数。
+
+#### JVM引入动态年龄计算，主要基于如下两点考虑：
+
+1、如果固定按照MaxTenuringThreshold设定的阈值作为晋升条件： a）MaxTenuringThreshold设置的过大，原本应该晋升的对象一直停留在Survivor区，直到Survivor区溢出，一旦溢出发生，Eden+Svuvivor中对象将不再依据年龄全部提升到老年代，这样对象老化的机制就失效了。 b）MaxTenuringThreshold设置的过小，“过早晋升”即对象不能在新生代充分被回收，大量短期对象被晋升到老年代，老年代空间迅速增长，引起频繁的Major GC。分代回收失去了意义，严重影响GC性能。
+
+2、相同应用在不同时间的表现不同：特殊任务的执行或者流量成分的变化，都会导致对象的生命周期分布发生波动，那么固定的阈值设定，因为无法动态适应变化，会造成和上面相同的问题。
+
 ### 垃圾回收器
 
 #### 			工作模式
@@ -333,6 +355,16 @@ AOP源码
 参考: https://cloud.tencent.com/developer/article/1661912
 
 ![1617027731001](jvm.assets/1617027731001.png)
+
+# FutureTask
+
+![1617287036048](jvm.assets/1617287036048.png)
+
+
+
+
+
+
 
 
 

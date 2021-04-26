@@ -287,3 +287,23 @@ public class BinarySearchTest {
 
 ![1615820389444](hashMap.assets/1615820389444.png)
 
+
+
+# Queue
+
+![1617865450541](hashMap.assets/1617865450541.png)
+
+
+
+## ArrayBlockingQueue
+
+一个由数组结构组成的有界阻塞队列。必须指定大小
+
+## LinkedBlockingQueue
+
+一个由链表结构组成的有界阻塞队列。此队列的默认和最大长度为 Integer.MAX_VALUE
+
+## SynchronousQueue
+
+是一个不存储元素的阻塞队列。每一个put操作必须等待一个take操作，否则不能继续添加元素。
+
