@@ -38,6 +38,37 @@ https://zhuanlan.zhihu.com/p/86396877
 
 
 
+### 序列化
+
+```java
+@Configuration
+public class MyRedisConfig {
+
+    @Bean(name = "redisTemplate")
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        //参照StringRedisTemplate内部实现指定序列化器
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(keySerializer());
+        redisTemplate.setHashKeySerializer(keySerializer());
+        redisTemplate.setValueSerializer(valueSerializer());
+        redisTemplate.setHashValueSerializer(valueSerializer());
+        return redisTemplate;
+    }
+
+    private RedisSerializer<String> keySerializer(){
+        return new StringRedisSerializer();
+    }
+
+    //使用Jackson序列化器
+    private RedisSerializer<Object> valueSerializer(){
+        return new GenericJackson2JsonRedisSerializer();
+    }
+}
+```
+
+https://zhuanlan.zhihu.com/p/352603005
+
 # RabbitMq
 
 ![1618839865249](redis.assets/1618839865249.png)
@@ -66,3 +97,10 @@ MQ 重试机制原因:  1、网络延迟。2、消费者出现异常。3、消�
 
 ![1619422198935](redis.assets/1619422198935.png)
 
+
+
+
+
+### 配置详情
+
+https://zhuanlan.zhihu.com/p/366215130
